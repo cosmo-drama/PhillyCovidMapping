@@ -6,18 +6,17 @@ import pandas as pd
 from matplotlib import *
 from matplotlib import pyplot as plt
 import datetime
-from pyzipcode import ZipCodeDatabase
 from uszipcode import SearchEngine, SimpleZipcode, Zipcode
-# from geopandas import read_file
-# import mapclassify
-# import libpysal
+from geopandas import read_file
+
 
 #configs to print all rows and column
 pd.set_option("display.max_columns", None)
 pd.set_option("display.max_rows", None)
 
 #pull in data
-path = r"/Users/yasminayala/Desktop/Philly Covid/data/covid_cases_by_zip.csv"
+#path = r"/Users/yasminayala/Desktop/Philly Covid/data/covid_cases_by_zip.csv"
+path = r"/home/acorn/Projects/PhillyCovidMapping/covid_cases_by_zip.csv"
 df = pd.read_csv(path)
 # print(df['zip_code']['covid_status']['count'])
 
@@ -50,8 +49,9 @@ final_cleaned_poscases = final_cleaned_poscases.iloc[:, 0:3]
 
 
 # shape_path = r"/Users/yasminayala/Desktop/Philly Covid/data/tl_2019_42101_faces/tl_2019_42101_faces.shp"
-# philly_map = geopandas.read_file(shape_path)
-# philly_map.head()
+shape_path = r"/home/acorn/Projects/PhillyCovidMapping/tl_2019_42101_faces/tl_2019_42101_faces.shp"
+philly_map = geopandas.read_file(shape_path)
+print(philly_map.head())
 
 
 #taking a look at the cleaned data 

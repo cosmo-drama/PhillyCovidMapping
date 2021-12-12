@@ -52,6 +52,8 @@ final_cleaned_poscases = final_cleaned_poscases.iloc[:, 0:3]
 shape_path = r"/home/acorn/Projects/PhillyCovidMapping/tl_2019_42101_faces/tl_2019_42101_faces.shp"
 philly_map = geopandas.read_file(shape_path)
 print(philly_map.head())
+philly_map.plot()
+plt.show()
 
 
 #taking a look at the cleaned data 

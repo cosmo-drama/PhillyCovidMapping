@@ -67,22 +67,19 @@ merged = pmap_cleaned.merge(final_cleaned_poscases, on="zip_code")
 # print(merged)
 
 # plot 
-#lots of adjustments need to be made....
+#lots of adjustments need to be made....i think pmap is missing some geometry data.
+# compare the map of pmap_cleaned vs the map of philly_map
 
-variableCount = "count"
-fig, ax = plt.subplots(1, figsize=(30, 10))
-ax.axis('off')
-vmin, vmax = 500, 10000
-sm = plt.cm.ScalarMappable(cmap="Blues", norm=plt.Normalize(vmin=vmin, vmax=vmax))
-
-sm.set_array([])
-
-fig.colorbar(sm)
-
-# plt.rcParams["figure.figsize"] = [50,70]
-merged.plot(column=variableCount, cmap="Blues", linewidth=0.8, ax=ax,edgecolor="0.8")
+merged.plot()
 plt.show()
 
+philly_map.plot()
+plt.show()
+
+# vs
+
+# pmap_cleaned.plot()
+# plt.show()
 
 #taking a look at the cleaned data 
 # print(final_cleaned_poscases.dtypes)

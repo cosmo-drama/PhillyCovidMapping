@@ -18,7 +18,6 @@ pd.set_option("display.max_rows", None)
 #path = r"/Users/yasminayala/Desktop/Philly Covid/data/covid_cases_by_zip.csv"
 path = r"/home/acorn/Projects/PhillyCovidMapping/covid_cases_by_zip.csv"
 df = pd.read_csv(path)
-# print(df['zip_code']['covid_status']['count'])
 
 
 #Cleaning: select rows, select positive cases, arrange by count
@@ -31,7 +30,8 @@ pos_data_count_sort = pos_data.sort_values('count', ascending=False)
     #fix etl time to date only
 pos_data_count_sort["etl_timestamp"] = pd.to_datetime(pos_data_count_sort["etl_timestamp"])
 pos_data_count_sort["etl_timestamp"]= pos_data_count_sort["etl_timestamp"].dt.date
-    #verify and filter out zips to philadelphia only 
+
+#verify and filter out zips to philadelphia only 
 def ZipToCity(x):
     search = SearchEngine(simple_zipcode=True)
     city = search.by_zipcode(x).city
@@ -47,12 +47,40 @@ final_cleaned_poscases = final_cleaned_poscases.iloc[:, 0:3]
 
 #create philly map 
 
-
 # shape_path = r"/Users/yasminayala/Desktop/Philly Covid/data/tl_2019_42101_faces/tl_2019_42101_faces.shp"
 shape_path = r"/home/acorn/Projects/PhillyCovidMapping/tl_2019_42101_faces/tl_2019_42101_faces.shp"
 philly_map = geopandas.read_file(shape_path)
-print(philly_map.head())
-philly_map.plot()
+
+# get zip code and geometry columns only
+pmap = philly_map[["ZCTA5CE10", "geometry"]]
+
+#drop duplicates and rename to match the zip_code column in final_cleaned_poscases
+pmap_clean = pmap.drop_duplicates(subset="ZCTA5CE10", keep='first')
+pmap_cleaned = pmap_clean.rename(columns={"ZCTA5CE10": "zip_code"})
+
+# convert zip_code column to int64 for the merge
+pmap_cleaned["zip_code"] = pd.to_numeric(pmap_cleaned["zip_code"])
+
+# merge geopandas frame pmap_cleaned with pandas dataframe final_cleaned_poscases on "zip_code" column which they both share
+merged = pmap_cleaned.merge(final_cleaned_poscases, on="zip_code")
+
+# print(merged)
+
+# plot 
+#lots of adjustments need to be made....
+
+variableCount = "count"
+fig, ax = plt.subplots(1, figsize=(30, 10))
+ax.axis('off')
+vmin, vmax = 500, 10000
+sm = plt.cm.ScalarMappable(cmap="Blues", norm=plt.Normalize(vmin=vmin, vmax=vmax))
+
+sm.set_array([])
+
+fig.colorbar(sm)
+
+# plt.rcParams["figure.figsize"] = [50,70]
+merged.plot(column=variableCount, cmap="Blues", linewidth=0.8, ax=ax,edgecolor="0.8")
 plt.show()
 
 
@@ -63,11 +91,6 @@ plt.show()
 # print(len(main_data))
 
 
-# pos_data.plot.area(stacked=False)
-# plt.show()
-
-# pos_data.plot.pie(subplots=True)
-# plt.show()
 
 
 
